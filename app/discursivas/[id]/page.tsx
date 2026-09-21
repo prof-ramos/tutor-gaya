@@ -22,7 +22,7 @@ export default async function AttemptPage({ params }: { params: Promise<{ id: st
     <main className="mx-auto max-w-4xl space-y-6 p-5 sm:p-10">
       <Link className="text-sm text-sky-700 underline" href="/discursivas">← Minhas discursivas</Link>
       <h1 className="text-3xl font-bold">Correção da resposta #{attempt.id}</h1>
-      <p className="text-sm text-slate-600">Nota e espelho de treinamento, não oficiais. A nota numérica do edital ainda não está implementada nesta versão.</p>
+      <p className="text-sm text-slate-600">Feedback e espelho de treinamento, não oficiais. A nota numérica do edital ainda não está implementada nesta versão.</p>
       <section className="rounded-xl border border-slate-200 bg-white p-5">
         <h2 className="text-lg font-semibold">Comando</h2>
         <p className="mt-2 whitespace-pre-wrap">{attempt.command}</p>

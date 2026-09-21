@@ -12,7 +12,8 @@ export function middleware(request: NextRequest) {
     });
   }
 
-  const expected = "Basic " + btoa(user + ":" + password);
+  const bytes = new TextEncoder().encode(user + ":" + password);
+  const expected = "Basic " + btoa(String.fromCharCode(...bytes));
   if (request.headers.get("authorization") !== expected) {
     return new NextResponse("Acesso restrito ao Tutor Gaya.", {
       status: 401,

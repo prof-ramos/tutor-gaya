@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { DiscursiveFeedback } from "@/lib/discursive-feedback";
 
 const labels = {
@@ -11,7 +12,7 @@ const badges = {
   nao_atendido: "bg-rose-50 text-rose-800",
 };
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ title, children }: { title: string; children: ReactNode }) {
   return <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
     <h2 className="text-xl font-semibold">{title}</h2>
     <div className="mt-4">{children}</div>

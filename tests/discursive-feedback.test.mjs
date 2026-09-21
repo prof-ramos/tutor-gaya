@@ -19,6 +19,7 @@ test("recusa critério sem status válido", () => {
   })));
 });
 test("recusa feedback sem resposta-modelo", () => {
-  const { modelAnswer, ...missing } = valid;
+  const missing = { ...valid };
+  delete missing.modelAnswer;
   assert.throws(() => parseFeedback(JSON.stringify(missing)));
 });
