@@ -1,3 +1,13 @@
+# Tutor Gaya
+
+Webapp pessoal de preparação para o concurso do TCDF, organizado em edital verticalizado, controle agregado de acertos e erros em questões externas e prática/correção simulada de discursivas.
+
+**[PRD do produto (docs/PRD.md)](docs/PRD.md)** — escopo, arquitetura, fórmulas, critérios de aceite e plano de implementação.
+
+> **Estado atual:** este repositório contém a estrutura inicial do Next.js Turso Starter. O exemplo de tarefas abaixo é código do starter e não representa funcionalidades concluídas do Tutor Gaya.
+
+---
+
 # Next.js Turso Starter
 
 This repository is a starter template for building a Next.js application with Turso and Drizzle ORM.
