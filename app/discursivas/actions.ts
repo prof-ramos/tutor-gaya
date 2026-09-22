@@ -15,11 +15,21 @@ function field(form: FormData, name: string, max: number, required = true): stri
   return result;
 }
 
+/** Like field(), but returns the raw string so whitespace the student typed is preserved. */
+function fieldRaw(form: FormData, name: string, max: number, required = true): string {
+  const value = form.get(name);
+  if (typeof value !== "string") throw new Error("Campo inválido: " + name);
+  const trimmed = value.trim();
+  if (trimmed.length > max || (required && !trimmed)) throw new Error("Preencha corretamente o campo: " + name);
+  if (value.length > max) throw new Error("Preencha corretamente o campo: " + name);
+  return value;
+}
+
 export async function submitDiscursive(form: FormData) {
   const command = field(form, "command", 4000);
   const criteriaText = field(form, "criteria", 2500);
-  const answer = field(form, "answer", 10000);
-  const referenceAnswer = field(form, "referenceAnswer", 10000, false);
+  const answer = fieldRaw(form, "answer", 10000);
+  const referenceAnswer = fieldRaw(form, "referenceAnswer", 10000, false);
   const criteria = criteriaText.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   if (criteria.length < 1 || criteria.length > 12 ||
       new Set(criteria).size !== criteria.length) {
