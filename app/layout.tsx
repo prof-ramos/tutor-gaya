@@ -2,24 +2,15 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 export const metadata: Metadata = {
-  title: "Next.js Turso Starter",
-  description: "Get started with Next.js and Turso",
+  title: "Tutor Gaya — Preparação TCDF",
+  description: "Controle de questões e feedback de discursivas para a preparação ao TCDF.",
 };
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>{children}</body>
+    <html lang="pt-BR">
+      <body className={geistSans.variable + " antialiased"}>{children}</body>
     </html>
   );
 }

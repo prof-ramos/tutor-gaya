@@ -1,77 +1,41 @@
 # Tutor Gaya
 
-Webapp pessoal de preparação para o concurso do TCDF, organizado em edital verticalizado, controle agregado de acertos e erros em questões externas e prática/correção simulada de discursivas.
+Webapp pessoal de preparação para o concurso TCDF. Código inicial baseado no Next.js Turso Starter.
 
-**[PRD do produto (docs/PRD.md)](docs/PRD.md)** — escopo, arquitetura, fórmulas, critérios de aceite e plano de implementação.
+## Implementado neste incremento
 
-> **Estado atual:** este repositório contém a estrutura inicial do Next.js Turso Starter. O exemplo de tarefas abaixo é código do starter e não representa funcionalidades concluídas do Tutor Gaya.
+- **/questoes:** registro de acertos e erros em questões externas e histórico agrupado por disciplina. A taxa é calculada como soma dos acertos dividida pela soma de acertos e erros.
+- **/discursivas:** envio de resposta a questão discursiva e feedback estruturado pela OpenAI, com critérios atendidos/parciais/não atendidos, omissões, erros conceituais e linguísticos, sugestões, espelho e resposta-modelo de treinamento.
+- **/discursivas/{id}:** consulta ao texto original e ao feedback persistido.
 
----
+O histórico começa vazio; não há dados de questões ou respostas fictícios. Para usar o feedback, são necessários comando e critérios de treinamento informados pelo usuário. **O espelho e a resposta-modelo não são oficiais** e a correção numérica completa do PRD ainda não foi implementada.
 
-# Next.js Turso Starter
+## Configuração
 
-This repository is a starter template for building a Next.js application with Turso and Drizzle ORM.
+Node.js 22+, conta Turso e chave OpenAI com acesso a modelo que aceite Responses API Structured Outputs:
 
-<img width="1200" alt="Next.js Starter" src="https://github.com/user-attachments/assets/b78fd54e-574b-43b9-8f8f-943d14722e64" />
+~~~sh
+npm ci
+cp .env.example .env.local
+# Preencha os valores server-side em .env.local.
+npm run db:migrate
+npm run dev
+~~~
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=Simple%20Next.js%20starter%20for%20using%20SQLite%20over%20HTTP%20with%20Turso.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F2bMt29jx0XHekOO2lYlj6R%2Fc902d38ad15abf0c6d52f05bf60d54c5%2Fzi0I1GXrZoKub1NCL6i3VKe8a2UE5HMITQn1WCyquvoSZxwk&demo-title=Next.js%20Turso%20Starter&demo-url=https%3A%2F%2Fnextjs-turso-starter.vercel.app&from=templates&products=%255B%257B%2522type%2522%253A%2522integration%2522%252C%2522protocol%2522%253A%2522storage%2522%252C%2522productSlug%2522%253A%2522database%2522%252C%2522integrationSlug%2522%253A%2522tursocloud%2522%257D%255D&project-name=Next.js%20Turso%20Starter&repository-name=turso-starter&repository-url=https%3A%2F%2Fgithub.com%2Ftursodatabase%2Fnextjs-turso-starter&skippable-integrations=1)
+Configure **APP_ACCESS_USER** e **APP_ACCESS_PASSWORD**; sem ambos o app devolve HTTP 503 para proteger os dados pessoais. O acesso HTTP Basic é temporário para uso individual em HTTPS; a autenticação Google OAuth prevista no PRD é uma etapa futura.
 
-## Stack
+No deploy Vercel, configure Development, Preview e Production separadamente, aplique as migrations ao banco correto antes de publicar e configure OPENAI_API_KEY e OPENAI_MODEL_FEEDBACK no ambiente do servidor. O build **não** migra banco automaticamente.
 
-- Next.js 15
-- App Router
-- Server Actions
-- Drizzle ORM
-- Turso Database
-- Todo CRUD
-- TypeScript
-- Tailwind CSS
+~~~sh
+npm run test
+npm run typecheck
+npm run lint
+npm run build
+~~~
 
-## Local Development
+## Documentação
 
-1. Clone this repository
-2. Install dependencies:
+- [PRD completo](docs/PRD.md)
+- [Implementação, configuração e limites deste incremento](docs/IMPLEMENTATION.md)
 
-   ```bash
-   npm install
-   ```
-
-3. Set up your environment variables:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Fill in your Turso database credentials:
-
-   ```
-   TURSO_DATABASE_URL=your_turso_database_url
-   TURSO_AUTH_TOKEN=your_turso_auth_token
-   ```
-
-4. Set up your database:
-
-   ```bash
-   npm run db:generate
-   npm run db:push
-   ```
-
-5. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-## Database Management
-
-This project uses Drizzle ORM for database operations. Here are the available commands:
-
-- `npm run db:generate` - Generate migration files from schema changes
-- `npm run db:push` - Push schema changes directly to the database (use with caution)
-- `npm run db:migrate` - Run migrations against the database
-- `npm run db:studio` - Open the Drizzle Studio for database management
-
-## Need Help?
-
-1. Open an issue on GitHub
-2. Submit a Pull Request to improve this starter
-3. [Join us on Discord](https://tur.so/discord)
+A peça técnica Informação, a integração com o edital verticalizado, a validação JevAI e a nota numérica simulada serão implementadas nas fases seguintes do PRD.
