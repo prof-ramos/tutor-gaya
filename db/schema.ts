@@ -32,5 +32,6 @@ export const discursiveAttempts = sqliteTable("discursive_attempts", {
   answer: text().notNull(),
   feedback: text(), // Structured JSON, only visible when status = completed.
   status: text().notNull().default("pending"),
+  idempotencyKey: text("idempotency_key").unique(),
   createdAt: text("created_at").notNull().default(sql.raw("CURRENT_TIMESTAMP")),
 });

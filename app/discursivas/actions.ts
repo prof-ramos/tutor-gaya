@@ -30,6 +30,11 @@ export async function submitDiscursive(form: FormData) {
   const criteriaText = field(form, "criteria", 2500);
   const answer = fieldRaw(form, "answer", 10000);
   const referenceAnswer = fieldRaw(form, "referenceAnswer", 10000, false);
+  const idempotencyKeyRaw = form.get("idempotencyKey");
+  const idempotencyKey =
+    typeof idempotencyKeyRaw === "string" && idempotencyKeyRaw.trim().length >= 8
+      ? idempotencyKeyRaw.trim().slice(0, 80)
+      : null;
   const criteria = criteriaText.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   if (criteria.length < 1 || criteria.length > 12 ||
       new Set(criteria).size !== criteria.length) {
@@ -39,12 +44,38 @@ export async function submitDiscursive(form: FormData) {
   const lines = answer.split(/\r?\n/);
   if (lines.length > 20) throw new Error("A questão não pode exceder 20 quebras de linha digitadas.");
 
+  if (idempotencyKey) {
+    const [existing] = await db
+      .select({ id: discursiveAttempts.id })
+      .from(discursiveAttempts)
+      .where(eq(discursiveAttempts.idempotencyKey, idempotencyKey))
+      .limit(1);
+    if (existing) {
+      redirect("/discursivas/" + existing.id);
+    }
+  }
+
   // Persist the student's original answer BEFORE calling the external provider.
-  const [attempt] = await db.insert(discursiveAttempts).values({
-    kind: "question", command, criteria: JSON.stringify(criteria), referenceAnswer,
-    answer, status: "pending",
-  }).returning({ id: discursiveAttempts.id });
-  if (!attempt) throw new Error("Não foi possível salvar sua resposta.");
+  let attempt: { id: number };
+  try {
+    const [created] = await db.insert(discursiveAttempts).values({
+      kind: "question", command, criteria: JSON.stringify(criteria), referenceAnswer,
+      answer, status: "pending", idempotencyKey,
+    }).returning({ id: discursiveAttempts.id });
+    if (!created) throw new Error("Não foi possível salvar sua resposta.");
+    attempt = created;
+  } catch (error) {
+    // Unique race: another identical submission won; reuse it.
+    if (idempotencyKey) {
+      const [existing] = await db
+        .select({ id: discursiveAttempts.id })
+        .from(discursiveAttempts)
+        .where(eq(discursiveAttempts.idempotencyKey, idempotencyKey))
+        .limit(1);
+      if (existing) redirect("/discursivas/" + existing.id);
+    }
+    throw error;
+  }
 
   try {
     const feedback = await generateDiscursiveFeedback({ command, criteria, answer, referenceAnswer });

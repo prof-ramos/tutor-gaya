@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { randomUUID } from "crypto";
 import { desc } from "drizzle-orm";
 import { db } from "@/db";
 import { discursiveAttempts } from "@/db/schema";
@@ -7,6 +8,7 @@ import { submitDiscursive } from "./actions";
 export const dynamic = "force-dynamic";
 
 export default async function DiscursivesPage() {
+  const idempotencyKey = randomUUID();
   const history = await db.select({
     id: discursiveAttempts.id, command: discursiveAttempts.command,
     status: discursiveAttempts.status, createdAt: discursiveAttempts.createdAt,
@@ -24,6 +26,7 @@ export default async function DiscursivesPage() {
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold">Nova prática</h2>
         <form action={submitDiscursive} className="mt-5 grid gap-5">
+          <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
           <label className="grid gap-2 text-sm font-medium">Comando da questão
             <textarea className="min-h-24 rounded-lg border border-slate-300 p-3 font-normal" name="command" maxLength={4000} required placeholder="Cole ou escreva o comando de uma questão de Conhecimentos Especializados." />
           </label>
